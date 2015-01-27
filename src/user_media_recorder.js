@@ -9,7 +9,7 @@ function UserMediaRecorder(stream, workerUrl, config) {
     bufferSize: 4096,
   }, config || {});
 
-  this.config.channels = config.mono ? 1 : 2;
+  this.config.channels = this.config.mono ? 1 : 2;
 
   this.worker = new Worker(workerUrl);
   this.stream = stream;
