@@ -62,3 +62,8 @@ Known Issues
 
 * WAV encoding doesn't work correctly if `config.mono` is set to `false`
 * MP3 recordings that use two channels use only the microphone's left channel for both output channels
+
+Building
+--------
+
+To build the redistributable browser build, run `npm run build`.

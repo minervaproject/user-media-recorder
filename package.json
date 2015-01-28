@@ -4,11 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "browserify --standalone UserMediaRecorder src/user_media_recorder.js > dist/user_media_recorder.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "object-assign": "^2.0.0"
+  },
+  "devDependencies": {
+    "browserify": "^8.1.1"
   }
 }
