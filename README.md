@@ -33,7 +33,7 @@ API
 
 ### `new UserMediaRecorder(stream, workerUrl[, config])`
 
-Creates a recorder that records audio from `stream. Note that each `UserMediaRecorder` instance can only record once. Attempting to call `startRecording` a second time will cause an exception to be thrown.
+Creates a recorder that records audio from `stream`. Note that each `UserMediaRecorder` instance can only record once. Attempting to call `startRecording` a second time will cause an exception to be thrown.
 
 `workerUrl` should be the path or URL to an encoder web worker (shipped with this library). You may use either `mp3_worker.js` (for recording MP3s) or `wav_worker.js` (for recording WAV files). If using the MP3 worker, `libmp3lame.js` must be available in the same directory as the worker.
 
