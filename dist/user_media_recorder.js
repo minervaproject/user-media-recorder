@@ -52,21 +52,20 @@ UserMediaRecorder.prototype.startRecording = function(callback) {
   if (callback) callback();
   this.recording = true;
 
-  audioContext = new AudioContext();
-  input = audioContext.createMediaStreamSource(this.stream);
+  UserMediaRecorder.audioContext = UserMediaRecorder.audioContext || new AudioContext();
+  input = UserMediaRecorder.audioContext.createMediaStreamSource(this.stream);
   node = input.context.createScriptProcessor(this.config.bufferSize, this.config.channels, this.config.channels);
   input.connect(node);
-  node.connect(audioContext.destination);
+  node.connect(UserMediaRecorder.audioContext.destination);
 
   node.addEventListener("audioprocess", this._onAudioProcess);
 
   this.worker.addEventListener("message", this._handleWorkerMessage.bind(this));
 
-  console.log({samplerate: audioContext.sampleRate});
   this.worker.postMessage({
     command: "init",
     config: {
-      samplerate: audioContext.sampleRate,
+      samplerate: UserMediaRecorder.audioContext.sampleRate,
       channels: this.config.channels,
       bitrate: this.config.bitrate
     }
@@ -105,9 +104,6 @@ UserMediaRecorder.prototype._getAudioData = function(inputBuffer) {
 UserMediaRecorder.prototype._handleWorkerMessage = function(evt) {
   var data = evt.data;
   switch (data.command) {
-  case "rate":
-    console.log(data.rate);
-    break;
   case "init":
     this.type = data.type;
     break;
