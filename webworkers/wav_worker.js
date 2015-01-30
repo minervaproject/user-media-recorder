@@ -72,6 +72,7 @@ this.addEventListener("message", function(evt) {
       index += 2;
     }
     this.postMessage({command: "end", buffer: wavBuffer});
+    this.close();
     break;
   }
 });

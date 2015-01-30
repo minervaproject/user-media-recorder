@@ -25,6 +25,7 @@ this.addEventListener("message", function(evt) {
     this.postMessage({command: "end", buffer: mp3data.data});
     Lame.close(mp3codec);
     mp3codec = null;
+    this.close();
     break;
   }
 });
