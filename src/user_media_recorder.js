@@ -33,7 +33,6 @@ UserMediaRecorder.prototype.startRecording = function(callback) {
 
   this.worker.addEventListener("message", this._handleWorkerMessage.bind(this));
 
-  console.log({samplerate: audioContext.sampleRate});
   this.worker.postMessage({
     command: "init",
     config: {
@@ -76,9 +75,6 @@ UserMediaRecorder.prototype._getAudioData = function(inputBuffer) {
 UserMediaRecorder.prototype._handleWorkerMessage = function(evt) {
   var data = evt.data;
   switch (data.command) {
-  case "rate":
-    console.log(data.rate);
-    break;
   case "init":
     this.type = data.type;
     break;

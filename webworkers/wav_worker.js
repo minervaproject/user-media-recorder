@@ -32,7 +32,6 @@ this.addEventListener("message", function(evt) {
     sampleRate = data.config.samplerate || sampleRate;
     channels = data.config.channels || 2;
     this.postMessage({command: "init", type: "audio/wav"});
-    this.postMessage({command: "rate", rate: sampleRate});
     break;
   case "encode":
     buffers.push(new Float32Array(data.buffer));
