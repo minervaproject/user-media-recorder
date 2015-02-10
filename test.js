@@ -3,34 +3,32 @@ var UserMediaRecorder = require("./index.js");
 var button = document.getElementById("btn");
 var button2 = document.getElementById("btn2");
 
-var recorder = null;
-button.addEventListener("click", function() {
-  var timeStarted = null,
-      timeEnded   = null;
+var recorder;
+var worker = new Worker("/webworkers/mp3_worker.js");
+var config = {
+  mono: true
+};
 
-  navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
-  var stream = navigator.getUserMedia({audio: true, video: false}, function(stream) {
-    recorder = new UserMediaRecorder(stream, "/webworkers/mp3_worker.js", {
-      mono: true
-    });
-
-    recorder.startRecording(function() {
-      console.log("start");
-      timeStarted = new Date();
-    });
-
-  }, function(e) {
-    console.error(e);
-  });
+navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia;
+navigator.getUserMedia({audio: true, video: false}, function(stream) {
+  recorder = new UserMediaRecorder(stream, worker);
+  startRecording();
+  setTimeout(function() {
+    startRecording();
+  }, 1500);
+}, function(e) {
+  console.error(e);
 });
 
-button2.addEventListener("click", function() {
-  if (!recorder) return;
-
-  recorder.stopRecording(function(blob) {
-    console.log("stop", blob);
-    timeEnded = new Date();
-    window.open(URL.createObjectURL(blob));
-    recorder = null;
-  });
-});
+function startRecording() {
+  console.log("starting");
+  var recording = recorder.startRecording(config);
+  setTimeout(function() {
+    console.log("stopping");
+    recorder.stopRecording(recording, function(blob) {
+      var url = URL.createObjectURL(blob);
+      console.log(url);
+      window.open(url);
+    });
+  }, 3000);
+};

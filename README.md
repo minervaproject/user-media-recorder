@@ -8,22 +8,24 @@ Example Usage
 
 ```javascript
 var timeStarted = null,
-    timeEnded   = null;
+    timeEnded   = null,
+    worker      = new Worker("/path/to/mp3_worker.js"),
+    config      = {
+      channels: 2,
+      bitrate: 96
+    };
 
 var stream = navigator.getUserMedia({audio: true, video: false}, function(stream) {
-  var recorder = new UserMediaRecorder(stream, "/path/to/mp3_worker.js", {
-    channels: 2,
-    bitrate: 96
-  });
+  var recorder = new UserMediaRecorder(stream, worker);
 
-  recorder.startRecording(function() {
-    timeStarted = new Date();
-  });
+  var recording = recorder.startRecording(config);
+  var timeStarted = new Date().getTime();
 
   // Sometime later...
-  recorder.stopRecording(function(blob) {
-    timeEnded = new Date();
+  recorder.stopRecording(recording, function(blob) {
+    var timeEnded = new Date().getTime();
     window.open(URL.createObjectURL(blob));
+    console.log("Length: " + timeEnded - timeStarted);
   });
 });
 ```
@@ -31,25 +33,23 @@ var stream = navigator.getUserMedia({audio: true, video: false}, function(stream
 API
 ---
 
-### `new UserMediaRecorder(stream, workerUrl[, config])`
+### `new UserMediaRecorder(stream, worker)`
 
 Creates a recorder that records audio from `stream`. Note that each `UserMediaRecorder` instance can only record once. Attempting to call `startRecording` a second time will cause an exception to be thrown.
 
 `workerUrl` should be the path or URL to an encoder web worker (shipped with this library). You may use either `mp3_worker.js` (for recording MP3s) or `wav_worker.js` (for recording WAV files). If using the MP3 worker, `libmp3lame.js` must be available in the same directory as the worker.
 
 * `stream` - the user media stream to record
-* `workerUrl` - the URL the web worker should use for audio processing; the worker used determines the type of the blob (e.g. `audio/wav` or `audio/mpeg`)
+* `worker` - a Web Worker to use for audio processing; the worker used determines the type of the blob (e.g. `audio/wav` or `audio/mpeg`)
+
+### `UserMediaRecorder#startRecording([config])`
+
+Starts recording the stream, using the given configuration for the recording.
+
 * `config` - an optional object of key/value pairs:
   * `config.mono` - whether or not to record mono audio - defaults to `false`
   * `config.bufferSize` - the buffer size to use for `createScriptProcessor` - defaults to `4096`
   * `config.bitrate` - the bit rate, only used by the MP3 encoder - defaults to `128`
-
-### `UserMediaRecorder#startRecording([callback])`
-
-Starts recording the stream, calling `callback` when recording starts.
-
-* `callback` - an optional function to execute when recording starts
-
 
 ### `UserMediaRecorder#stopRecording(callback)`
 

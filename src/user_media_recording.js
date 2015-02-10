@@ -1,68 +1,3 @@
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{var f;"undefined"!=typeof window?f=window:"undefined"!=typeof global?f=global:"undefined"!=typeof self&&(f=self),f.UserMediaRecorder=e()}}(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-'use strict';
-
-function ToObject(val) {
-	if (val == null) {
-		throw new TypeError('Object.assign cannot be called with null or undefined');
-	}
-
-	return Object(val);
-}
-
-module.exports = Object.assign || function (target, source) {
-	var from;
-	var keys;
-	var to = ToObject(target);
-
-	for (var s = 1; s < arguments.length; s++) {
-		from = arguments[s];
-		keys = Object.keys(Object(from));
-
-		for (var i = 0; i < keys.length; i++) {
-			to[keys[i]] = from[keys[i]];
-		}
-	}
-
-	return to;
-};
-
-},{}],2:[function(require,module,exports){
-var UserMediaRecording = require("./user_media_recording");
-
-var AudioContext = window.AudioContext || window.webkitAudioContext;
-var cachedAudioContext = null;
-
-function uuid() {
-  var d = (window.performance && window.performance.now && window.performance.now()) ||
-          (Date.now && Date.now()) ||
-          new Date().getTime();
-  var uuid = "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function(c) {
-      var r = (d + Math.random() * 16) % 16 | 0;
-      d = Math.floor(d / 16);
-      return (c === "x" ? r : (r&0x7|0x8)).toString(16);
-  });
-  return uuid;
-}
-
-function UserMediaRecorder(stream, worker) {
-  this.stream = stream;
-  this.worker = worker;
-}
-
-UserMediaRecorder.prototype.startRecording = function(config) {
-  cachedAudioContext = cachedAudioContext || new AudioContext();
-  var recording = new UserMediaRecording(uuid(), this.stream, cachedAudioContext, this.worker, config);
-  recording.startRecording();
-  return recording;
-};
-
-UserMediaRecorder.prototype.stopRecording = function(recording, callback) {
-  recording.stopRecording(callback);
-};
-
-module.exports = UserMediaRecorder;
-
-},{"./user_media_recording":3}],3:[function(require,module,exports){
 var assign = require("object-assign");
 
 function UserMediaRecording(uuid, stream, audioContext, worker, config) {
@@ -190,6 +125,3 @@ UserMediaRecording.prototype.appendToBuffer = function(buffer) {
 };
 
 module.exports = UserMediaRecording;
-
-},{"object-assign":1}]},{},[2])(2)
-});
